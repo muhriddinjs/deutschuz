@@ -27,7 +27,12 @@ export const QuizLayout: React.FC<QuizLayoutProps> = ({
     setInput('');
     setStatus('idle');
     setFeedback(null);
-    if (inputRef.current) inputRef.current.focus();
+    const timer = setTimeout(() => {
+      if (inputRef.current) {
+        inputRef.current.focus();
+      }
+    }, 50);
+    return () => clearTimeout(timer);
   }, [question]);
 
   const handleCheck = () => {
@@ -80,52 +85,53 @@ export const QuizLayout: React.FC<QuizLayoutProps> = ({
   const expectedText = Array.isArray(question.expectedAnswer) ? question.expectedAnswer[0] : question.expectedAnswer;
 
   return (
-    <div className="max-w-3xl mx-auto px-4 py-8">
-      <button onClick={onExit} className="flex items-center text-slate-500 hover:text-slate-800 mb-8 transition-colors font-medium">
-        <ArrowLeft size={20} className="mr-2" /> Back to Menu
+    <div className="max-w-2xl mx-auto px-4 py-6">
+      <button onClick={onExit} className="flex items-center text-slate-500 hover:text-slate-800 mb-6 transition-colors font-medium text-sm">
+        <ArrowLeft size={18} className="mr-2" /> Back to Menu
       </button>
 
       {/* Progress Bar */}
-      <div className="w-full bg-slate-200 rounded-full h-3 mb-10 overflow-hidden">
-        <div className="bg-blue-500 h-3 rounded-full transition-all duration-500 ease-out" style={{ width: `${progress}%` }} />
+      <div className="w-full bg-slate-200 rounded-full h-2 mb-8 overflow-hidden">
+        <div className="bg-blue-500 h-2 rounded-full transition-all duration-500 ease-out" style={{ width: `${progress}%` }} />
       </div>
 
-      <div className="bg-white rounded-3xl shadow-xl border border-slate-100 p-8 sm:p-12 mb-8 relative overflow-hidden">
+      <div className="bg-white rounded-2xl shadow-md border border-slate-100 p-6 sm:p-8 mb-6 relative overflow-hidden">
         {/* Background decorative element */}
-        <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-blue-50 to-transparent opacity-50" />
+        <div className="absolute top-0 left-0 w-full h-24 bg-gradient-to-b from-blue-50 to-transparent opacity-50" />
         
         <div className="relative z-10 flex flex-col items-center">
-          <div className="flex gap-4 mb-8">
+          <div className="flex gap-3 mb-6">
             <button 
               onClick={() => playGermanTTS(expectedText)}
-              className="p-4 bg-slate-100 text-slate-700 rounded-2xl hover:bg-slate-200 hover:text-blue-600 transition-all shadow-sm"
+              className="p-3 bg-slate-100 text-slate-700 rounded-xl hover:bg-slate-200 hover:text-blue-600 transition-all shadow-sm"
               title="Listen to German pronunciation"
             >
-              <Volume2 size={32} />
+              <Volume2 size={24} />
             </button>
           </div>
 
-          <h2 className="text-5xl sm:text-6xl font-black text-slate-900 mb-12 tracking-tight text-center">
+          <h2 className="text-4xl sm:text-5xl font-extrabold text-slate-900 mb-8 tracking-tight text-center">
             {question.display}
           </h2>
 
-          <div className="w-full max-w-lg relative">
+          <div className="w-full max-w-md relative">
             <input
               ref={inputRef}
+              autoFocus
               type="text"
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={handleKeyDown}
               disabled={status === 'correct'}
               placeholder="Type your answer in German..."
-              className={`w-full text-xl sm:text-2xl p-6 rounded-2xl border-2 outline-none transition-all ${
+              className={`w-full text-lg sm:text-xl p-4 pr-12 rounded-xl border-2 outline-none caret-slate-800 transition-all ${
                 status === 'idle' ? 'border-slate-300 focus:border-blue-500 shadow-sm' :
                 status === 'correct' ? 'border-emerald-500 bg-emerald-50 text-emerald-800' :
                 'border-red-500 bg-red-50 text-red-800'
               }`}
             />
-            {status === 'correct' && <Check className="absolute right-6 top-6 text-emerald-500" size={32} />}
-            {status === 'incorrect' && <X className="absolute right-6 top-6 text-red-500" size={32} />}
+            {status === 'correct' && <Check className="absolute right-4 top-4 text-emerald-500" size={24} />}
+            {status === 'incorrect' && <X className="absolute right-4 top-4 text-red-500" size={24} />}
           </div>
         </div>
       </div>
@@ -133,14 +139,14 @@ export const QuizLayout: React.FC<QuizLayoutProps> = ({
       <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
         <div className="flex-1 w-full">
           {status === 'incorrect' && (
-            <div className="bg-red-50 border border-red-200 text-red-800 p-6 rounded-2xl shadow-sm">
-              <p className="font-bold text-lg mb-2 flex items-center gap-2">
-                <X size={24} /> Incorrect
+            <div className="bg-red-50 border border-red-200 text-red-800 p-4 rounded-xl shadow-sm">
+              <p className="font-bold text-base mb-1 flex items-center gap-2">
+                <X size={20} /> Incorrect
               </p>
-              <p className="text-md mb-2">The correct answer is: <strong className="font-bold text-lg">{expectedText}</strong></p>
+              <p className="text-sm mb-1">The correct answer is: <strong className="font-bold text-base">{expectedText}</strong></p>
               {feedback && (
-                <div className="mt-4 p-4 bg-red-100 rounded-xl text-sm border border-red-200">
-                  <span className="font-semibold block mb-1">Grammar Tip:</span>
+                <div className="mt-3 p-3 bg-red-100 rounded-lg text-xs border border-red-200">
+                  <span className="font-semibold block mb-0.5">Grammar Tip:</span>
                   {feedback}
                 </div>
               )}
@@ -153,16 +159,16 @@ export const QuizLayout: React.FC<QuizLayoutProps> = ({
             <button 
               onClick={handleCheck}
               disabled={!input.trim()}
-              className="w-full sm:w-auto px-10 py-5 bg-blue-600 text-white rounded-2xl font-bold text-lg hover:bg-blue-700 disabled:opacity-50 disabled:hover:bg-blue-600 transition-all shadow-md flex items-center justify-center gap-2"
+              className="w-full sm:w-auto px-8 py-3.5 bg-blue-600 text-white rounded-xl font-semibold text-base hover:bg-blue-700 disabled:opacity-50 disabled:hover:bg-blue-600 transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer"
             >
               Check Answer
             </button>
           ) : (
             <button 
               onClick={onNext}
-              className="w-full sm:w-auto px-10 py-5 bg-slate-900 text-white rounded-2xl font-bold text-lg hover:bg-slate-800 transition-all shadow-md flex items-center justify-center gap-2"
+              className="w-full sm:w-auto px-8 py-3.5 bg-slate-900 text-white rounded-xl font-semibold text-base hover:bg-slate-800 transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer"
             >
-              Next <ArrowRight size={24} />
+              Next <ArrowRight size={20} />
             </button>
           )}
         </div>

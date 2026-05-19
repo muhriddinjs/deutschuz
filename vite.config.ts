@@ -10,23 +10,38 @@ export default defineConfig({
     tailwindcss(),
     VitePWA({
       registerType: 'autoUpdate',
+      includeAssets: ['favicon.svg'],
       manifest: {
         name: 'DeutschUz - German Learning',
         short_name: 'DeutschUz',
         description: 'Learn German numbers, times, and financial formats.',
-        theme_color: '#ffffff',
+        theme_color: '#3b82f6',
+        background_color: '#f8fafc',
+        display: 'standalone',
+        start_url: '/',
         icons: [
           {
             src: 'pwa-192x192.png',
             sizes: '192x192',
-            type: 'image/png'
+            type: 'image/png',
+            purpose: 'any'
           },
           {
             src: 'pwa-512x512.png',
             sizes: '512x512',
-            type: 'image/png'
+            type: 'image/png',
+            purpose: 'any'
+          },
+          {
+            src: 'pwa-512x512.png',
+            sizes: '512x512',
+            type: 'image/png',
+            purpose: 'maskable'
           }
         ]
+      },
+      devOptions: {
+        enabled: true
       }
     })
   ],
